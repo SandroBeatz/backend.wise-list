@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, NotFoundException} from '@nestjs/common';
 import {CreateListDto} from './dto/create-list.dto';
 import {UpdateListDto} from './dto/update-list.dto';
 import {PrismaService} from "../prisma/prisma.service";
@@ -17,19 +17,34 @@ export class ListService {
     });
   }
 
-  findAll() {
-    return `This action returns all list`;
+  async findAll() {
+    return this.prismaService.list.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} list`;
+  async findOne(id: string) {
+    const list = await this.prismaService.list.findUnique({
+      where: { id }
+    });
+
+    if(!list) throw new NotFoundException(`List with id ${id} not found`);
+
+    return list
   }
 
-  update(id: number, updateListDto: UpdateListDto) {
-    return `This action updates a #${id} list`;
+  async update(id: string, updateListDto: UpdateListDto) {
+    const list = await this.findOne(id);
+
+    return this.prismaService.list.update({
+      where: { id: list.id },
+      data: updateListDto
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} list`;
+  async remove(id: string) {
+    const list = await this.findOne(id);
+
+    return this.prismaService.list.delete({
+      where: { id: list.id }
+    });
   }
 }
