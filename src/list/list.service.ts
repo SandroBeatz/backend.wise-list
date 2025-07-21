@@ -18,7 +18,11 @@ export class ListService {
   }
 
   async findAll() {
-    return this.prismaService.list.findMany();
+    return this.prismaService.list.findMany({
+        include: {
+            items: true
+        }
+    });
   }
 
   async findOne(id: string) {
