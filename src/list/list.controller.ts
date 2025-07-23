@@ -1,7 +1,8 @@
-import {Controller, Get, Post, Body, Patch, Param, Delete} from '@nestjs/common';
+import {Controller, Get, Post, Body, Patch, Param, Delete, UseGuards} from '@nestjs/common';
 import { ListService } from './list.service';
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
+import {AuthGuard} from "../common/guards/auth.guard";
 
 @Controller('lists')
 export class ListController {
@@ -12,6 +13,7 @@ export class ListController {
     return this.listService.create(createListDto);
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   findAll() {
     return this.listService.findAll();
